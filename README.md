@@ -43,9 +43,36 @@ All of these features were factored into a model that uses a Random Forest Regre
 The model was trained on the same 'train' subsection of the 2000 - 2016 dataset, imputing the outage duration with the median of the total dataset.
 
 The results, compared to the baseline, are the following:
+
 | model    |   R-Squared |    RMSE |
 |:---------|------------:|--------:|
 | baseline |   -0.867084 | 6781.53 |
 | final    |    0.231066 | 4352.01 |
 
 Both metrics showed great improvement from the baseline, with the RMSE showing a **35.8%** decrease. The R^2 shows that the model is a good amount better than merely using the mean, but it is not good enough to reliably predict duration. 
+
+## Fairness Analysis
+
+Here I will be analysing the fairness of this final model when it comes to how well it does for different groups of the test set. I will be comparing the model's fairness on outages *west* of the Mississippi River to those *east*.
+
+### Null Hypothesis
+
+This model *is* fair. Its RMSE for Outages West of the Mississsippi are roughly the same as outages East of the Mississippi, and any differences are due to random chance.
+
+### Alternative Hypothesis
+
+This model *is not* fair. Its RMSE for Outages West of the Mississippi are higher than those East of the Mississippi.
+
+### Test Statistic & Significance level
+
+Differences in RMSEs (West - East); using a significane level of *0.01*.
+
+### Method and Conclusion
+
+I used a permuation test, comparing the acutal difference in RMSEs of the 'West' and 'East' States to randomized trials. After 10,000 trials, these are the results:
+
+<iframe src="assets/fair_test.html" width=800 height=600 frameBorder=0></iframe>
+
+*Distribution of RMSE differences in 10,000 randomized simulations. NOTE: Black bar represents the observed RMSE difference*
+
+This resulted in a p-value of 0.3268, which leads us to fail to reject the null hypothesis. This suggests fairness in the model, in relation to states East and West of the Mississippi River. This cannot confirm fairness though, as this is not a randomized controlled trial.
